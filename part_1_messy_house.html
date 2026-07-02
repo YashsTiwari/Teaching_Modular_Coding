@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Messy House - Interactive Game</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.header {
+  color: white;
+  text-align: center;
+  margin-bottom: 20px;
+  z-index: 100;
+}
+
+.header h1 {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.header p {
+  font-size: 20px;
+  opacity: 0.9;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.game-section {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  flex: 1;
+  min-width: 300px;
+  max-width: 800px;
+}
+
+.control-panel {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  flex: 0 0 280px;
+  text-align: center;
+}
+
+.house-scene {
+  position: relative;
+  width: 100%;
+  height: 600px;
+  background: linear-gradient(to bottom, #e8f4f8 0%, #f0e68c 100%);
+  border: 4px dashed #333;
+  border-radius: 15px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+/* Alex Character */
+.character {
+  position: absolute;
+  font-size: 80px;
+  font-weight: bold;
+  z-index: 50;
+  transition: all 0.6s ease;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+}
+
+.character.walking {
+  animation: wobble 0.6s ease;
+}
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-2deg); }
+  75% { transform: rotate(2deg); }
+}
+
+/* Floating items - NOT IN BOXES */
+.floating-item {
+  position: absolute;
+  font-size: 40px;
+  animation: float 4s infinite ease-in-out;
+  z-index: 20;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+  25% { transform: translateY(-20px) translateX(10px) rotate(5deg); }
+  50% { transform: translateY(-30px) translateX(-10px) rotate(-5deg); }
+  75% { transform: translateY(-15px) translateX(10px) rotate(5deg); }
+}
+
+/* Variation in animation timing */
+.floating-item.delay-1 { animation-delay: 0s; }
+.floating-item.delay-2 { animation-delay: 0.5s; }
+.floating-item.delay-3 { animation-delay: 1s; }
+.floating-item.delay-4 { animation-delay: 1.5s; }
+.floating-item.delay-5 { animation-delay: 2s; }
+
+/* Boxes */
+.box {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #FFB6C1 0%, #FFA07A 100%);
+  border: 4px solid #8B4513;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  font-weight: bold;
+  transition: all 0.3s;
+  z-index: 30;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  user-select: none;
+}
+
+.box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+.box.open {
+  animation: openBox 0.4s ease;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+}
+
+@keyframes openBox {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.box.closed {
+  animation: closeBox 0.3s ease;
+}
+
+@keyframes closeBox {
+  0% { transform: rotateY(90deg); }
+  100% { transform: rotateY(0deg); }
+}
+
+/* Task Display */
+.task-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.task-emoji {
+  font-size: 60px;
+  display: block;
+  margin: 10px 0;
+}
+
+.task-title {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.task-subtitle {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-top: 5px;
+}
+
+/* Control Panel */
+.stat-section {
+  background: #f0f0f0;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.stat-value {
+  font-size: 36px;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.emotion-meter {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.emotion-display {
+  font-size: 80px;
+  margin: 10px 0;
+}
+
+.emotion-text {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+button {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: bold;
+  margin: 10px 0;
+  width: 100%;
+}
+
+button:hover {
+  background: #5568d3;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.feedback {
+  margin-top: 10px;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  min-height: 30px;
+  text-align: center;
+}
+
+.feedback.wrong {
+  background: #ffcdd2;
+  color: #c62828;
+  animation: shake 0.3s;
+}
+
+.feedback.success {
+  background: #c8e6c9;
+  color: #2e7d32;
+  animation: bounce 0.5s;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes bounce {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Particle effects */
+.particle {
+  position: absolute;
+  pointer-events: none;
+  z-index: 60;
+}
+
+.particle.confetti {
+  animation: confetti-fall 1.5s ease-out forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(200px) rotate(720deg);
+  }
+}
+
+.progress-bar {
+  width: 100%;
+  height: 12px;
+  background: #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  width: 0%;
+  transition: width 0.3s;
+}
+
+.search-message {
+  background: #fff3cd;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 15px 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #856404;
+  text-align: center;
+  min-height: 25px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  
+  .game-section {
+    min-width: 100%;
+  }
+  
+  .control-panel {
+    min-width: 100%;
+    flex: 0 0 auto;
+  }
+  
+  .house-scene {
+    height: 500px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h1>🏠 The Messy House</h1>
+<p>Can you find what you need? (Good luck!)</p>
+</div>
+
+<div class="container">
+
+<!-- Game Section -->
+<div class="game-section">
+
+<div class="task-section">
+<div class="task-emoji" id="taskEmoji">🪥</div>
+<div class="task-title" id="taskTitle">Find: Toothbrush</div>
+<div class="task-subtitle">Click on boxes to search!</div>
+</div>
+
+<div class="house-scene" id="houseScene">
+<!-- Alex will be here -->
+<!-- Boxes will be here -->
+<!-- Floating items will be here -->
+</div>
+
+<div class="search-message" id="searchMessage"></div>
+
+</div>
+
+<!-- Control Panel -->
+<div class="control-panel">
+
+<div class="stat-section">
+<div class="stat-label">Task</div>
+<div class="stat-value" id="taskNumber">1/3</div>
+</div>
+
+<div class="stat-section">
+<div class="stat-label">Boxes Opened</div>
+<div class="stat-value" id="boxesOpened">0</div>
+</div>
+
+<div class="stat-section">
+<div class="stat-label">Wrong Attempts</div>
+<div class="stat-value" id="wrongAttempts">0</div>
+</div>
+
+<div class="emotion-meter">
+<div class="emotion-text">Your Emotion:</div>
+<div class="emotion-display" id="emotionDisplay">😐</div>
+<div id="emotionLabel" style="font-size: 14px; color: #666;">Not Too Bad</div>
+</div>
+
+<button onclick="skipTask()">⏭️ Skip Task</button>
+<button onclick="resetGame()">🔄 Reset Game</button>
+
+<div class="progress-bar">
+<div class="progress-fill" id="progressFill" style="width: 33%;"></div>
+</div>
+<div style="font-size: 12px; color: #666; margin-top: 5px; text-align: center;">Progress: 1/3 tasks</div>
+
+</div>
+
+</div>
+
+<script>
+
+const tasks = [
+  { name: "Find: Toothbrush", emoji: "🪥", item: "🪥", correctBox: null },
+  { name: "Find: Coffee", emoji: "☕", item: "☕", correctBox: null },
+  { name: "Find: Book", emoji: "📖", item: "📖", correctBox: null }
+];
+
+const allItems = [
+  "🪥", "☕", "📖", "🧦", "🍳", "📺", "🍞", "🛏", "🚿", 
+  "📚", "🧴", "🎮", "🍌", "👕", "📱", "💻", "🎧", "👜"
+];
+
+const boxPositions = [
+  { top: "10%", left: "10%" },
+  { top: "10%", left: "35%" },
+  { top: "10%", left: "60%" },
+  { top: "10%", left: "80%" },
+  { top: "45%", left: "5%" },
+  { top: "45%", left: "30%" },
+  { top: "45%", left: "55%" },
+  { top: "45%", left: "80%" },
+  { top: "75%", left: "15%" },
+  { top: "75%", left: "50%" }
+];
+
+let currentTaskIndex = 0;
+let totalBoxesOpened = 0;
+let totalWrongAttempts = 0;
+let currentAttempts = 0;
+let boxes = [];
+let scene = null;
+
+function init() {
+  scene = document.getElementById("houseScene");
+  createCharacter();
+  createBoxes();
+  createFloatingItems();
+  startNewTask();
+}
+
+function createCharacter() {
+  const char = document.createElement("div");
+  char.id = "alex";
+  char.className = "character";
+  char.textContent = "👦";
+  char.style.left = "50%";
+  char.style.top = "50%";
+  char.style.transform = "translate(-50%, -50%)";
+  scene.appendChild(char);
+}
+
+function createBoxes() {
+  boxes = [];
+  boxPositions.forEach((pos, index) => {
+    const box = document.createElement("div");
+    box.className = "box";
+    box.style.top = pos.top;
+    box.style.left = pos.left;
+    box.textContent = "📦";
+    box.onclick = () => openBox(index);
+    box.dataset.boxIndex = index;
+    box.dataset.itemCount = Math.floor(Math.random() * 5) + 2;
+    scene.appendChild(box);
+    boxes.push(box);
+  });
+}
+
+function createFloatingItems() {
+  // Scatter items around the house
+  const itemsToShow = allItems.slice(0, 12);
+  itemsToShow.forEach((item, idx) => {
+    const floatingItem = document.createElement("div");
+    floatingItem.className = `floating-item delay-${idx % 5}`;
+    floatingItem.textContent = item;
+    floatingItem.style.left = Math.random() * 80 + 10 + "%";
+    floatingItem.style.top = Math.random() * 50 + 10 + "%";
+    scene.appendChild(floatingItem);
+  });
+}
+
+function openBox(boxIndex) {
+  const box = boxes[boxIndex];
+  const task = tasks[currentTaskIndex];
+  
+  box.classList.add("open");
+  currentAttempts++;
+  totalBoxesOpened++;
+  
+  // Animate Alex walking to the box
+  const alex = document.getElementById("alex");
+  const boxRect = box.getBoundingClientRect();
+  const sceneRect = scene.getBoundingClientRect();
+  
+  const boxX = (boxRect.left - sceneRect.left + boxRect.width / 2) / sceneRect.width * 100;
+  const boxY = (boxRect.top - sceneRect.top + boxRect.height / 2) / sceneRect.height * 100;
+  
+  alex.style.left = boxX + "%";
+  alex.style.top = boxY + "%";
+  alex.classList.add("walking");
+  
+  setTimeout(() => {
+    alex.classList.remove("walking");
+  }, 600);
+  
+  // Show items in box
+  const itemsInBox = Math.floor(Math.random() * 3) + 1;
+  const boxItems = [];
+  for (let i = 0; i < itemsInBox; i++) {
+    const randomItem = allItems[Math.floor(Math.random() * allItems.length)];
+    boxItems.push(randomItem);
+  }
+  
+  // Show the items that are in this box
+  showBoxContents(box, boxItems, task.item);
+  
+  // Check if correct item found
+  if (boxItems.includes(task.item)) {
+    // Found it!
+    setTimeout(() => {
+      handleSuccess();
+    }, 800);
+  } else {
+    // Not found
+    totalWrongAttempts++;
+    const message = `❌ Not there! Found: ${boxItems.join(" ")}`;
+    document.getElementById("searchMessage").textContent = message;
+    
+    updateStats();
+    
+    setTimeout(() => {
+      box.classList.remove("open");
+      box.textContent = "📦";
+      document.getElementById("searchMessage").textContent = "";
+    }, 1500);
+  }
+}
+
+function showBoxContents(box, items, targetItem) {
+  box.textContent = items.join(" ");
+  
+  // If correct item found, highlight it
+  if (items.includes(targetItem)) {
+    box.style.background = "linear-gradient(135deg, #90EE90 0%, #32CD32 100%)";
+  }
+}
+
+function handleSuccess() {
+  const task = tasks[currentTaskIndex];
+  
+  // Show success message
+  const feedback = document.getElementById("searchMessage");
+  feedback.textContent = `✅ FOUND ${task.emoji}!`;
+  feedback.className = "search-message success";
+  
+  // Celebrate animation
+  celebrateSuccess();
+  
+  // Move to next task
+  setTimeout(() => {
+    if (currentTaskIndex < tasks.length - 1) {
+      currentTaskIndex++;
+      currentAttempts = 0;
+      resetBoxes();
+      startNewTask();
+    } else {
+      endGame();
+    }
+  }, 1500);
+}
+
+function celebrateSuccess() {
+  const alex = document.getElementById("alex");
+  alex.textContent = "🎉";
+  
+  // Create confetti
+  for (let i = 0; i < 15; i++) {
+    const particle = document.createElement("div");
+    particle.className = "particle confetti";
+    particle.textContent = "✨";
+    particle.style.left = Math.random() * 100 + "%";
+    particle.style.top = "0%";
+    particle.style.fontSize = Math.random() * 20 + 20 + "px";
+    scene.appendChild(particle);
+    
+    setTimeout(() => particle.remove(), 1500);
+  }
+}
+
+function resetBoxes() {
+  boxes.forEach(box => {
+    box.classList.remove("open");
+    box.textContent = "📦";
+    box.style.background = "linear-gradient(135deg, #FFB6C1 0%, #FFA07A 100%)";
+  });
+  
+  const alex = document.getElementById("alex");
+  alex.textContent = "👦";
+  alex.style.left = "50%";
+  alex.style.top = "50%";
+}
+
+function startNewTask() {
+  const task = tasks[currentTaskIndex];
+  document.getElementById("taskEmoji").textContent = task.emoji;
+  document.getElementById("taskTitle").textContent = task.name;
+  document.getElementById("taskNumber").textContent = `${currentTaskIndex + 1}/3`;
+  document.getElementById("progressFill").style.width = ((currentTaskIndex + 1) / 3 * 100) + "%";
+  updateStats();
+}
+
+function updateStats() {
+  document.getElementById("boxesOpened").textContent = totalBoxesOpened;
+  document.getElementById("wrongAttempts").textContent = totalWrongAttempts;
+  
+  // Update emotion based on wrong attempts
+  const emotionDisplay = document.getElementById("emotionDisplay");
+  const emotionLabel = document.getElementById("emotionLabel");
+  
+  if (totalWrongAttempts < 3) {
+    emotionDisplay.textContent = "😐";
+    emotionLabel.textContent = "Not Too Bad";
+  } else if (totalWrongAttempts < 6) {
+    emotionDisplay.textContent = "😕";
+    emotionLabel.textContent = "Getting Annoyed";
+  } else if (totalWrongAttempts < 10) {
+    emotionDisplay.textContent = "😤";
+    emotionLabel.textContent = "Very Frustrated";
+  } else {
+    emotionDisplay.textContent = "😡";
+    emotionLabel.textContent = "EXTREMELY ANGRY!";
+  }
+}
+
+function skipTask() {
+  currentTaskIndex++;
+  currentAttempts = 0;
+  
+  if (currentTaskIndex < tasks.length) {
+    resetBoxes();
+    startNewTask();
+    document.getElementById("searchMessage").textContent = "⏭️ Skipped to next task!";
+  } else {
+    endGame();
+  }
+}
+
+function resetGame() {
+  currentTaskIndex = 0;
+  totalBoxesOpened = 0;
+  totalWrongAttempts = 0;
+  currentAttempts = 0;
+  resetBoxes();
+  startNewTask();
+  document.getElementById("searchMessage").textContent = "";
+}
+
+function endGame() {
+  const feedback = document.getElementById("searchMessage");
+  feedback.innerHTML = `
+    <div style="font-size: 24px; margin-bottom: 10px;">🏠 THE MESSY HOUSE IS EXHAUSTING!</div>
+    <div style="font-size: 16px;">Total boxes opened: ${totalBoxesOpened}</div>
+    <div style="font-size: 16px;">Total wrong attempts: ${totalWrongAttempts}</div>
+    <div style="font-size: 16px; margin-top: 15px; color: #F44336;">
+      😤 Most time was spent SEARCHING, not doing!
+    </div>
+  `;
+  
+  const alex = document.getElementById("alex");
+  alex.textContent = "😫";
+}
+
+// Initialize on load
+window.onload = init;
+
+</script>
+
+</body>
+</html>

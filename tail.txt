@@ -1,0 +1,15 @@
+creation-
+
+python3 -m venv project1
+python3 -m venv myenv
+
+source myenv/bin/activate
+
+(myenv) $
+
+pip install numpy pandas
+
+
+using conda-
+
+conda create -n myenv python=3.12

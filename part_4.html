@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+🚀 Agent Headquarters
+</title>
+
+<link rel="stylesheet"
+href="style.css">
+
+</head>
+
+<body>
+
+<div class="title">
+
+🚀 AGENT HEADQUARTERS
+
+</div>
+
+<div class="mainContainer">
+
+    <!-- LEFT PANEL -->
+
+    <div class="panel missionPanel">
+
+        <h2>
+            🚨 Mission
+        </h2>
+
+        <div class="missionCard">
+
+            Build First Mars Colony
+
+        </div>
+
+        <h3>
+            Requirements
+        </h3>
+
+        <ul>
+
+            <li id="reqSearch">
+                🔍 Research Resources
+            </li>
+
+            <li id="reqPlan">
+                📅 Survival Plan
+            </li>
+
+            <li id="reqBudget">
+                💰 Budget
+            </li>
+
+            <li id="reqComms">
+                📡 Report To Earth
+            </li>
+
+            <li id="reqMemory">
+                🧠 Remember Findings
+            </li>
+
+        </ul>
+
+    </div>
+
+
+    <!-- CENTER PANEL -->
+
+    <div class="panel headquarters">
+
+        <div class="commander">
+
+            🤖
+
+            <div class="speech"
+                 id="commanderSpeech">
+
+                Build my team!
+
+            </div>
+
+        </div>
+
+        <div class="slotsContainer">
+
+            <div class="slot"
+                 data-slot="1">
+
+                Drop Agent Here
+
+            </div>
+
+            <div class="slot"
+                 data-slot="2">
+
+                Drop Agent Here
+
+            </div>
+
+            <div class="slot"
+                 data-slot="3">
+
+                Drop Agent Here
+
+            </div>
+
+            <div class="slot"
+                 data-slot="4">
+
+                Drop Agent Here
+
+            </div>
+
+            <div class="slot"
+                 data-slot="5">
+
+                Drop Agent Here
+
+            </div>
+
+        </div>
+
+        <button id="launchBtn">
+
+            🚀 Launch Mission
+
+        </button>
+
+    </div>
+
+
+    <!-- RIGHT PANEL -->
+
+    <div class="panel agentPanel">
+
+        <h2>
+
+            🧩 Available Agents
+
+        </h2>
+
+        <div class="agentsContainer">
+
+            <div class="agentCard"
+                 draggable="true"
+                 data-agent="search">
+
+                🔍 Search Agent
+
+            </div>
+
+            <div class="agentCard"
+                 draggable="true"
+                 data-agent="planner">
+
+                📅 Planner Agent
+
+            </div>
+
+            <div class="agentCard"
+                 draggable="true"
+                 data-agent="budget">
+
+                💰 Budget Agent
+
+            </div>
+
+            <div class="agentCard"
+                 draggable="true"
+                 data-agent="communication">
+
+                📡 Communication Agent
+
+            </div>
+
+            <div class="agentCard"
+                 draggable="true"
+                 data-agent="memory">
+
+                🧠 Memory Agent
+
+            </div>
+
+            <div class="agentCard wrong"
+                 draggable="true"
+                 data-agent="pizza">
+
+                🍕 Pizza Agent
+
+            </div>
+
+            <div class="agentCard wrong"
+                 draggable="true"
+                 data-agent="gaming">
+
+                🎮 Gaming Agent
+
+            </div>
+
+            <div class="agentCard wrong"
+                 draggable="true"
+                 data-agent="music">
+
+                🎵 Music Agent
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- TASK ANIMATION AREA -->
+
+<div id="taskArea">
+
+</div>
+
+
+<!-- LOG AREA -->
+
+<div class="logPanel">
+
+    <h2>
+
+        📜 Mission Log
+
+    </h2>
+
+    <div id="log">
+
+        Waiting for mission launch...
+
+    </div>
+
+</div>
+
+
+<!-- PYTHON REVEAL -->
+
+<div class="revealPanel"
+     id="revealPanel">
+
+    <h2>
+
+        🐍 Agent → Python File Mapping
+
+    </h2>
+
+    <div class="mappingContainer">
+
+        <div class="mapping">
+
+            🔍 Search Agent
+
+            ➜
+
+            search_agent.py
+
+        </div>
+
+        <div class="mapping">
+
+            📅 Planner Agent
+
+            ➜
+
+            planner_agent.py
+
+        </div>
+
+        <div class="mapping">
+
+            💰 Budget Agent
+
+            ➜
+
+            budget_agent.py
+
+        </div>
+
+        <div class="mapping">
+
+            📡 Communication Agent
+
+            ➜
+
+            communication_agent.py
+
+        </div>
+
+        <div class="mapping">
+
+            🧠 Memory Agent
+
+            ➜
+
+            memory.py
+
+        </div>
+
+        <div class="mapping commanderMap">
+
+            🤖 Commander
+
+            ➜
+
+            main.py
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="script.js">
+</script>
+
+</body>
+
+</html>

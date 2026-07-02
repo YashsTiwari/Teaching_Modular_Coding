@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Company - Interactive Workflow</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.header {
+  color: white;
+  text-align: center;
+  margin-bottom: 30px;
+  z-index: 100;
+}
+
+.header h1 {
+  font-size: 56px;
+  margin-bottom: 10px;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  animation: titleAppear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes titleAppear {
+  0% { transform: translateY(-50px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.header p {
+  font-size: 22px;
+  opacity: 0.9;
+}
+
+.main-container {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 25px;
+  width: 100%;
+  max-width: 1500px;
+}
+
+/* WORKFLOW VISUALIZATION */
+.workflow-box {
+  background: white;
+  border-radius: 25px;
+  padding: 40px;
+  box-shadow: 0 25px 80px rgba(0,0,0,0.25);
+  backdrop-filter: blur(10px);
+}
+
+.workflow-canvas {
+  position: relative;
+  width: 100%;
+  height: 650px;
+  background: linear-gradient(135deg, rgba(248,249,255,0.8) 0%, rgba(240,230,255,0.8) 100%);
+  border-radius: 20px;
+  border: 2px solid rgba(102,126,234,0.2);
+  overflow: hidden;
+}
+
+svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+/* BOSS/ORCHESTRATOR */
+.boss-container {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  text-align: center;
+}
+
+.boss-emoji {
+  font-size: 120px;
+  display: block;
+  animation: bossPulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,0.2));
+}
+
+@keyframes bossPulse {
+  0%, 100% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.08) translateY(-10px); }
+}
+
+.boss-label {
+  background: white;
+  padding: 10px 25px;
+  border-radius: 20px;
+  font-weight: bold;
+  color: #333;
+  font-size: 14px;
+  margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border: 2px solid #667eea;
+}
+
+.task-display {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #333;
+  padding: 12px 20px;
+  border-radius: 15px;
+  font-weight: bold;
+  margin-top: 8px;
+  font-size: 13px;
+  border: 2px solid #FF6F00;
+}
+
+/* TEAM NODES */
+.team-node {
+  position: absolute;
+  width: 130px;
+  height: 140px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 3px solid white;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+  z-index: 50;
+}
+
+.team-node:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+}
+
+.team-emoji {
+  font-size: 60px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.team-name {
+  font-size: 13px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.team-status {
+  font-size: 11px;
+  background: rgba(255,255,255,0.3);
+  padding: 4px 10px;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+}
+
+/* Team positions */
+.search-team { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); left: 5%; top: 50%; transform: translateY(-50%); }
+.planner-team { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); left: 25%; top: 15%; }
+.budget-team { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); left: 25%; bottom: 15%; }
+.database-team { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); left: 50%; top: 50%; transform: translate(-50%, -50%); }
+.llm-team { background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%); right: 25%; top: 15%; }
+.email-team { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); right: 5%; top: 50%; transform: translateY(-50%); }
+
+/* ANIMATIONS */
+.team-node.active {
+  animation: nodeActive 0.6s ease;
+}
+
+@keyframes nodeActive {
+  0% { transform: scale(1) translateY(-50%); }
+  50% { transform: scale(1.15) translateY(-50%); }
+  100% { transform: scale(1) translateY(-50%); }
+}
+
+.team-node.working {
+  animation: nodeWorking 0.5s ease-in-out infinite;
+}
+
+@keyframes nodeWorking {
+  0%, 100% { opacity: 1; box-shadow: 0 10px 35px rgba(0,0,0,0.15); }
+  50% { opacity: 0.6; box-shadow: 0 0 40px rgba(255,255,255,0.6); }
+}
+
+/* PARTICLES */
+.particle {
+  position: absolute;
+  pointer-events: none;
+  z-index: 30;
+}
+
+.star-particle {
+  animation: starBurst 1.2s ease-out forwards;
+  font-size: 28px;
+}
+
+@keyframes starBurst {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0) rotate(0deg);
+    filter: drop-shadow(0 0 15px rgba(255,255,255,0.8));
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0) translateY(80px) rotate(180deg);
+    filter: drop-shadow(0 0 0 rgba(255,255,255,0));
+  }
+}
+
+.flow-particle {
+  animation: flowLine 2s ease-in-out forwards;
+  font-size: 24px;
+  filter: drop-shadow(0 0 10px currentColor);
+}
+
+@keyframes flowLine {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* CONTROL PANEL */
+.control-panel {
+  background: white;
+  border-radius: 25px;
+  padding: 30px;
+  box-shadow: 0 25px 80px rgba(0,0,0,0.25);
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.control-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 15px;
+  border-radius: 15px;
+  text-align: center;
+}
+
+.task-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task-btn {
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: 2px solid transparent;
+}
+
+.task-btn:hover {
+  transform: translateX(5px);
+  box-shadow: 0 8px 20px rgba(102,126,234,0.3);
+}
+
+.task-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.task-btn.active {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #333;
+  border: 2px solid #FF6F00;
+}
+
+.reset-btn {
+  padding: 15px;
+  background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.reset-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(76,175,80,0.3);
+}
+
+/* RESULTS */
+.results-box {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.9);
+  color: #00ff00;
+  padding: 25px 40px;
+  border-radius: 15px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  border: 2px solid #00ff00;
+  box-shadow: 0 0 30px rgba(0,255,0,0.3);
+  display: none;
+  z-index: 200;
+  text-align: center;
+  animation: resultsAppear 0.5s ease;
+}
+
+.results-box.show {
+  display: block;
+}
+
+@keyframes resultsAppear {
+  0% { transform: translateX(-50%) translateY(50px); opacity: 0; }
+  100% { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+.results-line {
+  margin: 8px 0;
+}
+
+.timer {
+  font-size: 28px;
+  font-weight: bold;
+  color: #00ff00;
+  margin: 15px 0;
+}
+
+/* FALSE HOPE */
+.false-hope {
+  display: none;
+  margin-top: 40px;
+  padding: 50px;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  border-radius: 25px;
+  text-align: center;
+  border: 5px dashed #FF6F00;
+  box-shadow: 0 25px 80px rgba(0,0,0,0.25);
+  color: #333;
+}
+
+.false-hope.show {
+  display: block;
+  animation: falseHopeAppear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes falseHopeAppear {
+  0% { transform: scale(0.8) rotate(-5deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.excitement-emoji {
+  font-size: 150px;
+  display: block;
+  animation: excitementBounce 0.8s ease-in-out infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes excitementBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-40px) scale(1.1); }
+}
+
+.false-hope h2 {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #FF6F00;
+}
+
+.false-hope p {
+  font-size: 20px;
+  line-height: 1.8;
+  margin: 15px 0;
+}
+
+.reality-box {
+  background: white;
+  color: #FF6F00;
+  padding: 30px;
+  border-radius: 15px;
+  margin-top: 25px;
+  font-weight: bold;
+  font-size: 18px;
+  border: 3px solid #FF6F00;
+}
+
+.code-block {
+  background: #1a1a1a;
+  color: #00ff00;
+  padding: 25px;
+  border-radius: 15px;
+  margin-top: 25px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  text-align: left;
+  overflow-x: auto;
+  line-height: 1.8;
+}
+
+@media (max-width: 1100px) {
+  .main-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .control-panel {
+    width: 100%;
+  }
+  
+  .workflow-canvas {
+    height: 500px;
+  }
+  
+  .team-node {
+    width: 100px;
+    height: 110px;
+  }
+  
+  .team-emoji {
+    font-size: 45px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h1>🏢 Agent Company</h1>
+<p>Watch teams coordinate in real-time</p>
+</div>
+
+<div class="main-container">
+
+<!-- WORKFLOW VISUALIZATION -->
+<div class="workflow-box">
+<div class="workflow-canvas" id="workflowCanvas">
+<svg id="connections"></svg>
+
+<!-- BOSS -->
+<div class="boss-container">
+<div class="boss-emoji" id="bossEmoji">👨‍💼</div>
+<div class="boss-label">ORCHESTRATOR</div>
+<div class="task-display" id="taskDisplay">Select a task</div>
+</div>
+
+<!-- TEAMS -->
+<div class="team-node search-team" data-team="search">
+<div class="team-emoji">🔍</div>
+<div class="team-name">Search</div>
+<div class="team-status" id="status-search">Ready</div>
+</div>
+
+<div class="team-node planner-team" data-team="planner">
+<div class="team-emoji">📅</div>
+<div class="team-name">Planner</div>
+<div class="team-status" id="status-planner">Ready</div>
+</div>
+
+<div class="team-node budget-team" data-team="budget">
+<div class="team-emoji">🧮</div>
+<div class="team-name">Budget</div>
+<div class="team-status" id="status-budget">Ready</div>
+</div>
+
+<div class="team-node database-team" data-team="database">
+<div class="team-emoji">🗄️</div>
+<div class="team-name">Database</div>
+<div class="team-status" id="status-database">Ready</div>
+</div>
+
+<div class="team-node llm-team" data-team="llm">
+<div class="team-emoji">🧠</div>
+<div class="team-name">Claude AI</div>
+<div class="team-status" id="status-llm">Ready</div>
+</div>
+
+<div class="team-node email-team" data-team="email">
+<div class="team-emoji">📧</div>
+<div class="team-name">Email</div>
+<div class="team-status" id="status-email">Ready</div>
+</div>
+
+<!-- RESULTS -->
+<div class="results-box" id="resultsBox">
+<div class="results-line">✅ All teams coordinated!</div>
+<div class="timer" id="timer">0.0s</div>
+<div class="results-line">🎉 Workflow complete!</div>
+</div>
+
+</div>
+
+<!-- FALSE HOPE -->
+<div class="false-hope" id="falseHope">
+<div class="excitement-emoji">🤩</div>
+<h2>INCREDIBLE!</h2>
+<p>🚀 Multiple teams working together!</p>
+<p>🧠 AI making decisions in real-time!</p>
+<p>⚡ Complex orchestration happening!</p>
+
+<div class="reality-box">
+<div style="color: #FF6F00; margin-bottom: 15px;">⚠️ BUT WAIT...</div>
+You just saw a REAL agent system.<br/>
+It's POWERFUL and COMPLEX.<br/><br/>
+
+To build this, you need:<br/>
+❌ Python functions<br/>
+❌ Imports & modules<br/>
+❌ Error handling<br/>
+❌ Async/await<br/>
+❌ APIs<br/><br/>
+
+<span style="color: #4CAF50; font-size: 22px;">🎯 That's EXACTLY what we're teaching you!</span>
+</div>
+
+<div class="code-block">
+# This is what orchestrates the workflow:
+
+class AgentOrchestrator:
+&nbsp;&nbsp;async def handle_task(self, task):
+&nbsp;&nbsp;&nbsp;&nbsp;search = await self.search.find(task)
+&nbsp;&nbsp;&nbsp;&nbsp;enhanced = await self.llm.analyze(search)
+&nbsp;&nbsp;&nbsp;&nbsp;plan = await self.planner.create(enhanced)
+&nbsp;&nbsp;&nbsp;&nbsp;budget = await self.budget.calculate(plan)
+&nbsp;&nbsp;&nbsp;&nbsp;saved = await self.db.save(budget)
+&nbsp;&nbsp;&nbsp;&nbsp;email = await self.email.send(saved)
+&nbsp;&nbsp;&nbsp;&nbsp;return email
+
+# One function. Multiple teams. Complex logic.
+# This is what you'll build.
+</div>
+
+</div>
+
+</div>
+
+<!-- CONTROL PANEL -->
+<div class="control-panel">
+
+<div class="control-title">🎮 SELECT TASK</div>
+
+<div class="task-buttons">
+<button class="task-btn" onclick="runTask('travel')">✈️ Plan a Trip</button>
+<button class="task-btn" onclick="runTask('research')">🔬 Research</button>
+<button class="task-btn" onclick="runTask('report')">📊 Report</button>
+<button class="task-btn" onclick="runTask('schedule')">🤝 Schedule</button>
+<button class="task-btn" onclick="runTask('analysis')">💰 Analysis</button>
+</div>
+
+<button class="reset-btn" onclick="resetAll()">🔄 Reset</button>
+
+</div>
+
+</div>
+
+<script>
+
+const tasks = {
+  travel: {
+    name: "Plan a Trip",
+    emoji: "✈️",
+    sequence: ["search", "database", "llm", "planner", "budget", "email"],
+    steps: ["🔍 Searching flights", "🗄️ Checking database", "🧠 Analyzing with AI", "📅 Planning itinerary", "🧮 Calculating costs", "📧 Sending report"]
+  },
+  research: {
+    name: "Research Topic",
+    emoji: "🔬",
+    sequence: ["search", "llm", "database", "email"],
+    steps: ["🔍 Searching sources", "🧠 Analyzing content", "🗄️ Storing findings", "📧 Sending report"]
+  },
+  report: {
+    name: "Generate Report",
+    emoji: "📊",
+    sequence: ["database", "llm", "budget", "email"],
+    steps: ["🗄️ Gathering data", "🧠 Generating insights", "🧮 Creating summary", "📧 Distributing"]
+  },
+  schedule: {
+    name: "Schedule Meeting",
+    emoji: "🤝",
+    sequence: ["database", "planner", "email"],
+    steps: ["🗄️ Checking calendars", "📅 Finding best time", "📧 Sending invites"]
+  },
+  analysis: {
+    name: "Analyze Budget",
+    emoji: "💰",
+    sequence: ["database", "llm", "budget", "email"],
+    steps: ["🗄️ Loading data", "🧠 Analyzing patterns", "🧮 Forecasting", "📧 Sending analysis"]
+  }
+};
+
+let isRunning = false;
+let taskInProgress = null;
+
+function resetAllTeams() {
+  document.querySelectorAll('.team-node').forEach(node => {
+    node.classList.remove('active', 'working');
+    const team = node.dataset.team;
+    document.getElementById(`status-${team}`).textContent = 'Ready';
+  });
+  document.getElementById('resultsBox').classList.remove('show');
+  document.getElementById('falseHope').classList.remove('show');
+  document.getElementById('bossEmoji').textContent = '👨‍💼';
+  document.getElementById('taskDisplay').textContent = 'Select a task';
+}
+
+function updateTeamStatus(team, status) {
+  const el = document.getElementById(`status-${team}`);
+  if (el) el.textContent = status;
+}
+
+function createParticle(x, y, emoji, type = 'star') {
+  const particle = document.createElement('div');
+  particle.className = `particle ${type}-particle`;
+  particle.textContent = emoji;
+  particle.style.left = x + 'px';
+  particle.style.top = y + 'px';
+  document.getElementById('workflowCanvas').appendChild(particle);
+  
+  setTimeout(() => particle.remove(), type === 'star' ? 1200 : 2000);
+}
+
+function getTeamPosition(teamKey) {
+  const node = document.querySelector(`[data-team="${teamKey}"]`);
+  if (!node) return { x: 0, y: 0 };
+  
+  const canvas = document.getElementById('workflowCanvas');
+  const rect = node.getBoundingClientRect();
+  const canvasRect = canvas.getBoundingClientRect();
+  
+  return {
+    x: rect.left - canvasRect.left + rect.width / 2,
+    y: rect.top - canvasRect.top + rect.height / 2
+  };
+}
+
+async function runTask(taskKey) {
+  if (isRunning) return;
+  isRunning = true;
+  taskInProgress = taskKey;
+  
+  const task = tasks[taskKey];
+  resetAllTeams();
+  
+  // Update task display
+  document.getElementById('taskDisplay').textContent = task.emoji + ' ' + task.name;
+  document.getElementById('bossEmoji').textContent = '🤔';
+  
+  // Update buttons
+  document.querySelectorAll('.task-btn').forEach(btn => {
+    btn.disabled = true;
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  
+  // Run sequence
+  let time = 0;
+  
+  for (let i = 0; i < task.sequence.length; i++) {
+    const teamKey = task.sequence[i];
+    const stepMessage = task.steps[i];
+    
+    await new Promise(resolve => {
+      setTimeout(() => {
+        // Activate team
+        const teamNode = document.querySelector(`[data-team="${teamKey}"]`);
+        teamNode.classList.add('working');
+        updateTeamStatus(teamKey, '⚡ Working');
+        
+        // Create particles from boss to team
+        const bossPos = { x: 320, y: 100 };
+        const teamPos = getTeamPosition(teamKey);
+        
+        for (let p = 0; p < 3; p++) {
+          setTimeout(() => {
+            createParticle(bossPos.x, bossPos.y, '✨', 'flow');
+          }, p * 150);
+        }
+        
+        time += 1.5;
+        
+        setTimeout(() => {
+          teamNode.classList.remove('working');
+          teamNode.classList.add('active');
+          updateTeamStatus(teamKey, '✅ Done');
+          
+          // Burst particles
+          const pos = getTeamPosition(teamKey);
+          for (let p = 0; p < 5; p++) {
+            const angle = (p / 5) * Math.PI * 2;
+            const distance = 60;
+            const px = pos.x + Math.cos(angle) * distance;
+            const py = pos.y + Math.sin(angle) * distance;
+            createParticle(px, py, '⭐', 'star');
+          }
+          
+          resolve();
+        }, 1000);
+      }, i * 1500);
+    });
+  }
+  
+  // Complete
+  document.getElementById('bossEmoji').textContent = '😍';
+  
+  await new Promise(resolve => setTimeout(resolve, 800));
+  
+  // Show results
+  document.getElementById('timer').textContent = (time * 0.8).toFixed(1) + 's';
+  document.getElementById('resultsBox').classList.add('show');
+  
+  // Celebration
+  const canvas = document.getElementById('workflowCanvas');
+  for (let i = 0; i < 20; i++) {
+    setTimeout(() => {
+      createParticle(
+        Math.random() * canvas.offsetWidth,
+        Math.random() * canvas.offsetHeight,
+        ['⭐', '🎉', '✨', '💫'][Math.floor(Math.random() * 4)],
+        'star'
+      );
+    }, i * 100);
+  }
+  
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  
+  // Show false hope
+  document.getElementById('falseHope').classList.add('show');
+  
+  // Reset controls
+  isRunning = false;
+  document.querySelectorAll('.task-btn').forEach(btn => {
+    btn.disabled = false;
+  });
+}
+
+function resetAll() {
+  resetAllTeams();
+  document.querySelectorAll('.task-btn').forEach(btn => btn.classList.remove('active'));
+}
+
+</script>
+
+</body>
+</html>

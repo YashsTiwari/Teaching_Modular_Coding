@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modular Code: From Simple to Complex - Yashs Tiwari</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #2c3e50;
+            line-height: 1.7;
+        }
+        
+        .page {
+            background-color: white;
+            margin: 20px;
+            padding: 50px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            page-break-after: always;
+            position: relative;
+        }
+        
+        .instructor-header {
+            text-align: right;
+            color: #718096;
+            font-size: 12px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #cbd5e0;
+        }
+        
+        h1 {
+            color: #1a5490;
+            border-bottom: 3px solid #1a5490;
+            padding-bottom: 15px;
+            font-size: 28px;
+        }
+        
+        h2 {
+            color: #2c5282;
+            border-left: 5px solid #2c5282;
+            padding-left: 15px;
+            margin-top: 30px;
+            font-size: 20px;
+        }
+        
+        h3 {
+            color: #2d3748;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        
+        .code-block {
+            background-color: #f7fafc;
+            border: 1px solid #cbd5e0;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            border-radius: 4px;
+            line-height: 1.5;
+        }
+        
+        .section-divider {
+            border: none;
+            border-top: 2px solid #cbd5e0;
+            margin: 40px 0;
+        }
+        
+        .question-space {
+            margin: 20px 0;
+            padding: 0;
+        }
+        
+        .question-label {
+            color: #2d3748;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .write-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .line {
+            border-bottom: 1px solid #2c3e50;
+            height: 22px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #f7fafc;
+        }
+        
+        th {
+            background-color: #2c5282;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #cbd5e0;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #edf2f7;
+        }
+        
+        .insight-box {
+            background-color: #edf2f7;
+            border-left: 4px solid #2c5282;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 2px;
+        }
+        
+        .insight-box strong {
+            color: #2c5282;
+        }
+        
+        .comparison-item {
+            background-color: #f7fafc;
+            padding: 12px;
+            margin: 10px 0;
+            border-left: 3px solid #2c5282;
+        }
+        
+        .filename {
+            background-color: #2d3748;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 12px;
+            display: inline-block;
+            margin: 5px 0;
+        }
+        
+        .structure-diagram {
+            background-color: #f7fafc;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            border: 1px solid #cbd5e0;
+        }
+        
+        .activity-title {
+            color: #2d3748;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 15px 0 10px 0;
+        }
+        
+        @media print {
+            body {
+                background-color: white;
+            }
+            .page {
+                box-shadow: none;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- PAGE 1: Introduction -->
+<div class="page">
+    <div class="instructor-header">
+        <strong>Instructor:</strong> Yashs Tiwari<br>
+        <strong>Course:</strong> Introduction to Modular Code Architecture
+    </div>
+    
+    <h1>Modular Code: Simple to Complex</h1>
+    
+    <h2>What You'll Learn</h2>
+    <p>In this worksheet, you'll see how the same code organization pattern works for:</p>
+    <ul>
+        <li><strong>Simple project:</strong> Organized House (find items in rooms)</li>
+        <li><strong>Complex project:</strong> Mars Mission (space exploration system)</li>
+    </ul>
+    
+    <p>The pattern is identical. Only the complexity changes.</p>
+    
+    <h2>Key Principle: Modular Code</h2>
+    <div class="insight-box">
+        <strong>One file = One responsibility</strong><br>
+        Whether you're finding items or exploring Mars, keep each file focused on ONE job.
+    </div>
+    
+    <h2>Today's Question</h2>
+    <div class="question-space">
+        <div class="question-label">Q: Why would the same pattern work for both simple and complex projects?</div>
+        <div class="write-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+    
+    <h2>Structure Preview</h2>
+    <p>Both projects have the same pattern:</p>
+    <div class="comparison-item">
+        <strong>Pattern:</strong> Multiple agent files + main.py that imports and calls them
+    </div>
+    <div class="comparison-item">
+        <strong>Benefit:</strong> Each part is independent, but works together
+    </div>
+    <div class="comparison-item">
+        <strong>Result:</strong> Code is organized, maintainable, scalable
+    </div>
+</div>
+
+<!-- PAGE 2: Organized House Structure -->
+<div class="page">
+    <div class="instructor-header">Yashs Tiwari</div>
+    
+    <h1>PART A: Organized House</h1>
+    <p><em>Simple Example: Finding items in a house</em></p>
+    
+    <h2>File Structure</h2>
+    <div class="structure-diagram">
+├── main.py            ← Imports and calls all functions
+├── kitchen.py         ← search_kitchen()
+├── bathroom.py        ← search_bathroom()
+├── bedroom.py         ← search_bedroom()
+└── living_room.py     ← search_living_room()
+    </div>
+    
+    <h2>Sample: kitchen.py</h2>
+    <div class="code-block">
+import random
+
+def search_kitchen():
+    print("Searching kitchen... ", end="")
+    if random.random() > 0.5:
+        print("FOUND! ✓")
+        return True
+    else:
+        print("Not here")
+        return False
+    </div>
+    
+    <h2>Sample: main.py</h2>
+    <div class="code-block">
+from kitchen import search_kitchen
+from bathroom import search_bathroom
+from bedroom import search_bedroom
+from living_room import search_living_room
+
+print("Starting search\n")
+
+if search_kitchen():
+    print("Found in kitchen!")
+elif search_bathroom():
+    print("Found in bathroom!")
+elif search_bedroom():
+    print("Found in bedroom!")
+elif search_living_room():
+    print("Found in living room!")
+else:
+    print("Not found anywhere")
+    </div>
+    
+    <h2>What's Happening</h2>
+    <div class="question-space">
+        <div class="question-label">Q: What does main.py do?</div>
+        <div class="write-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+    
+    <div class="question-space">
+        <div class="question-label">Q: Why do we check kitchen first? What if it's first but returns False?</div>
+        <div class="write-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 3: Mars Mission Structure -->
+<div class="page">
+    <div class="instructor-header">Yashs Tiwari</div>
+    
+    <h1>PART B: Mars Mission</h1>
+    <p><em>Complex Example: Space exploration system with multiple agents</em></p>
+    
+    <h2>File Structure</h2>
+    <div class="structure-diagram">
+├── main.py                    ← Orchestrates the mission
+├── search_agent.py            ← find_resources()
+├── planner_agent.py           ← create_plan()
+├── budget_agent.py            ← calculate_budget()
+├── communication_agent.py      ← send_report()
+└── memory_agent.py            ← remember_findings()
+    </div>
+    
+    <h2>Sample Files</h2>
+    
+    <h3>search_agent.py</h3>
+    <div class="code-block">
+def find_resources():
+    print("🔍 Searching for resources on Mars...")
+    </div>
+    
+    <h3>planner_agent.py</h3>
+    <div class="code-block">
+def create_plan():
+    print("📅 Creating Mars survival plan...")
+    </div>
+    
+    <h3>budget_agent.py</h3>
+    <div class="code-block">
+def calculate_budget():
+    print("💰 Calculating Mars colony budget...")
+    </div>
+    
+    <h3>communication_agent.py</h3>
+    <div class="code-block">
+def send_report():
+    print("📡 Sending report to Earth...")
+    </div>
+    
+    <h3>memory_agent.py</h3>
+    <div class="code-block">
+def remember_findings():
+    print("🧠 Saving important findings...")
+    </div>
+    
+    <h2>Sample: main.py</h2>
+    <div class="code-block">
+from search_agent import find_resources
+from planner_agent import create_plan
+from budget_agent import calculate_budget
+from communication_agent import send_report
+from memory_agent import remember_findings
+
+print("🚀 Starting Mars Mission\n")
+
+find_resources()
+create_plan()
+calculate_budget()
+remember_findings()
+send_report()
+
+print("\n✅ Mission Complete")
+    </div>
+</div>
+
+<!-- PAGE 4: Understanding Mars Mission -->
+<div class="page">
+    <div class="instructor-header">Yashs Tiwari</div>
+    
+    <h1>Mars Mission: Detailed Analysis</h1>
+    
+    <h2>How It Works</h2>
+    <div class="insight-box">
+        <strong>Each agent has ONE responsibility:</strong><br>
+        - search_agent: Find resources<br>
+        - planner_agent: Create plans<br>
+        - budget_agent: Calculate costs<br>
+        - memory_agent: Store data<br>
+        - communication_agent: Send reports
+    </div>
+    
+    <h2>Imports in main.py</h2>
+    <div class="code-block">
+from search_agent import find_resources
+from planner_agent import create_plan
+from budget_agent import calculate_budget
+from communication_agent import send_report
+from memory_agent import remember_findings
+    </div>
+    
+    <div class="question-space">
+        <div class="question-label">Q: What does each import do?</div>
+        <div class="write-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+    
+    <h2>Execution Order</h2>
+    <div class="question-space">
+        <div class="question-label">Q: Why does find_resources() come BEFORE create_plan()? What's the logic?</div>
+        <div class="write-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+    
+    <div class="question-space">
+        <div class="question-label">Q: What if we called send_report() FIRST? What would happen?</div>
+        <div class="write-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+    
+    <h2>Adding a New Agent</h2>
+    <div class="question-space">
+        <div class="question-label">Q: If we needed to add a "doctor_agent" to check colony health, what would we do?</div>
+        <div class="write-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 5: Side-by-Side Comparison -->
+<div class="page">
+    <div class="instructor-header">Yashs Tiwari</div>
+    
+    <h1>Pattern Comparison</h1>
+    
+    <h2>Same Structure, Different Complexity</h2>
+    
+    <table>
+        <tr>
+            <th>Aspect</th>
+            <th>Organized House</th>
+            <th>Mars Mission</th>
+        </tr>
+        <tr>
+            <td><strong>Number of agent files</strong></td>
+            <td>4 rooms</td>
+            <td>5 agents</td>
+        </tr>
+        <tr>
+            <td><strong>Purpose</strong></td>
+            <td>Find items</td>
+            <td>Run space mission</td>
+        </tr>
+        <tr>
+            <td><strong>Agent names</strong></td>
+            <td>kitchen, bathroom, bedroom, living_room</td>
+            <td>search, planner, budget, communication, memory</td>
+        </tr>
+        <tr>
+            <td><strong>Pattern</strong></td>
+            <td>Each room has search function</td>
+            <td>Each agent has specific responsibility</td>
+        </tr>
+        <tr>
+            <td><strong>main.py role</strong></td>
+            <td>Coordinates search</td>
+            <td>Orchestrates mission</td>
+        </tr>
+        <tr>
+            <td><strong>Scaling</strong></td>
+            <td>Add new room file</td>
+            <td>Add new agent file</td>
+        </tr>
+    </table>
+    
+    <div class="insight-box">
+        <strong>KEY INSIGHT:</strong> The structure is identical! Whether simple (house) or complex (Mars mission), the same pattern works.
+    </div>
+    
+    <h2>Code Structure Pattern</h2>
+    <div class="code-block">
+# Same pattern, every time:
+
+from agent_1 import function_1
+from agent_2 import function_2
+from agent_3 import function_3
+
+# Do something
+function_1()
+function_2()
+function_3()
+    </div>
+</div>
+
+<!-- PAGE 6: Critical Thinking -->
+<div class="page">
+    <div class="instructor-header">Yashs Tiwari</div>
+    
+    <h1>Why This Pattern Works</h1>
+    
+    <h2>Advantages of Modular Code</h2>
+    <div class="insight-box">
+        <strong>1. Isolation:</strong> Each file is independent. Changes to kitchen.py don't break bathroom.py.
+    </div>
+    <div class="insight-box">
+        <strong>2. Clarity:</strong> Looking for logic? It's in the file that matches its name.
+    </div>
+    <div class="insight-box">
+        <strong>3. Scaling:</strong> Add 10 rooms or 20 agents. Same pattern works.
+    </div>
+    <div class="insight-box">
+        <strong>4. Maintenance:</strong> Fix a bug in one agent? Only one file to change.
+    </div>
+    
+    <h2>Thinking Questions</h2>
+    
+    <div class="question-space">
+        <div class="question-label">Q: If you needed to change how search_kitchen() works, what would you do?</div>
+        <div class="write-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+    
+    <div class="question-space">
+        <div class="question-label">Q: If the house had 50 rooms, would this code pattern still work?</div>
+        <div class="write-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+    
+    <div class="question-space">
+        <div class="question-label">Q: Why is it better than having ALL search functions in ONE file?</div>
+        <div class="write-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+    
+    <h2>Real-World Application</h2>
+    <div class="question-space">
+        <div class="question-label">Q: Think of a real system (school, hospital, bank). What would the "agents" be?</div>
+        <div class="write-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 7: Import Rules and Imports Mechanics -->
+<div class="page">
+    <div class="instructor-header">Yashs Tiwari</div>
+    
+    <h1>How Imports Work</h1>
+    
+    <h2>Import Syntax</h2>
+    <div class="code-block">
+from search_agent import find_resources
+     ↑               ↑
+     |               └── Function name in the file
+     └── File name (no .py)
+    </div>
+    
+    <div class="insight-box">
+        <strong>When you import:</strong><br>
+        Python looks for search_agent.py in the SAME folder<br>
+        Finds the find_resources function<br>
+        Loads it into memory<br>
+        Now you can use it!
+    </div>
+    
+    <h2>Rules for Imports</h2>
+    
+    <table>
+        <tr>
+            <th>Rule</th>
+            <th>Example</th>
+        </tr>
+        <tr>
+            <td>All files in SAME folder</td>
+            <td>main.py, search_agent.py, planner_agent.py (all together)</td>
+        </tr>
+        <tr>
+            <td>No .py extension in import</td>
+            <td><code>from search_agent import</code> (NOT search_agent.py)</td>
+        </tr>
+        <tr>
+            <td>Function names must be unique OR use "as"</td>
+            <td><code>from x import search as x_search</code></td>
+        </tr>
+        <tr>
+            <td>Import goes at the TOP of main.py</td>
+            <td>All imports before you use the functions</td>
+        </tr>
+    </table>
+    
+    <h2>Common Questions</h2>
+    
+    <div class="question-space">
+        <div class="question-label">Q: What happens if search_agent.py is in a different folder?</div>
+        <div class="write-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+    
+    <div class="question-space">
+        <div class="question-label">Q: If you misspell the file or function name in the import, what happens?</div>
+        <div class="write-lines">
+            <div class="line"></div>
+        </div>
+    </div>
+    
+    <div class="question-space">
+        <div class="question-label">Q: Can you import a function that doesn't exist?</div>
+        <div class="write-lines">
+            <div class="line"></div>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 8: Reflection and Challenge -->
+<div class="page">
+    <div class="instructor-header">Yashs Tiwari</div>
+    
+    <h1>Reflection and Challenge</h1>
+    
+    <h2>What You Now Understand</h2>
+    <ul>
+        <li>✓ How to split code into multiple files</li>
+        <li>✓ How to import functions from other files</li>
+        <li>✓ How imports work mechanically</li>
+        <li>✓ The pattern works for both simple and complex projects</li>
+        <li>✓ Why this is professional code organization</li>
+    </ul>
+    
+    <h2>Personal Reflection</h2>
+    
+    <div class="question-space">
+        <div class="question-label">Q: Which was easier to understand - Organized House or Mars Mission? Why?</div>
+        <div class="write-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+    
+    <div class="question-space">
+        <div class="question-label">Q: What part of this pattern was confusing?</div>
+        <div class="write-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+    
+    <h2>Challenge: Your Own Project</h2>
+    
+    <div class="insight-box">
+        <strong>CHALLENGE:</strong> Think of a system you know (school, game, restaurant, etc.) and break it into agents/files.
+    </div>
+    
+    <div class="question-space">
+        <div class="question-label">Your system:</div>
+        <div class="write-lines">
+            <div class="line"></div>
+        </div>
+    </div>
+    
+    <div class="question-space">
+        <div class="question-label">Agent 1:</div>
+        <div class="write-lines">
+            <div class="line"></div>
+        </div>
+    </div>
+    
+    <div class="question-space">
+        <div class="question-label">Agent 2:</div>
+        <div class="write-lines">
+            <div class="line"></div>
+        </div>
+    </div>
+    
+    <div class="question-space">
+        <div class="question-label">Agent 3:</div>
+        <div class="write-lines">
+            <div class="line"></div>
+        </div>
+    </div>
+    
+    <h2>Next Steps</h2>
+    <div class="insight-box">
+        <strong>Now you can:</strong><br>
+        • Build your own modular projects<br>
+        • Understand how real software is organized<br>
+        • Scale from simple to complex without changing the pattern<br>
+        • Think like a professional programmer
+    </div>
+</div>
+
+</body>
+</html>
